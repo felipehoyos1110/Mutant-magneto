@@ -25,7 +25,9 @@ SECRET_KEY = '9*n)6l)31mjje@r0==j9duy!-po2=9cor#s%lyn(l90loxcsd-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['third-fold-263914.uc.r.appspot.com',
+                 'mutantmagneto-dot-third-fold-263914.uc.r.appspot.com',
+                 '127.0.0.1']
 
 
 # Application definition
