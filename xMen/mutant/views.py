@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from mutant.models import RegisterDna
 from mutant.serializers import RegisterDnaSerializer, AllRegisterDnaSerializer
 from mutant.serializers import StatsSerializer
+
 from mutant.serializers import Stats
 
 
@@ -23,8 +24,12 @@ class MutantView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             dna_string = serializer.validated_data.get('dna')
+            # VALIDA LA CADENA ADN
+            if not validateDna(dna_string):
+                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
             # VALIDA SI ES MUTANTE
             is_mutant = isMutant(dna_string)
+            # REALIZA REGISTRO
             register_dna = RegisterDna(dna=dna_string, isMutant=is_mutant)
             register_dna.save()
             if is_mutant:
@@ -33,6 +38,16 @@ class MutantView(APIView):
                 return Response(status=status.HTTP_403_FORBIDDEN)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+def validateDna(dna):
+    # LA CADENA SOLO PUEDE TENER LOS VALORES PERMITIDOS
+    simpDict = {"A", "T", "C", "G"}
+    for c in dna:
+        for d in c:
+            if d not in simpDict:
+                return False
+    return True
 
 
 def isMutant(dna):
@@ -44,8 +59,10 @@ def isMutant(dna):
         return secuencia[y]
 
     totalSecuencias = 0
+    # Empieza a recorrer el arreglo
     for row in range(0, len(dna)):
         index = 0
+        # Recorre letra por letra
         for col in dna[row]:
             totalHorizontal = 1
             totalVertical = 1
@@ -106,7 +123,7 @@ class StatsView(APIView):
         mutants = RegisterDna.objects.filter(isMutant=True).count()
         no_mutants = RegisterDna.objects.filter(isMutant=False).count()
         if no_mutants > 0:
-            ratio = mutants/no_mutants
+            ratio = mutants / no_mutants
         else:
             ratio = 0
         obj = Stats(mutants, no_mutants, ratio)

@@ -1,2 +1,2 @@
-service: mutantmagneto
+service: mutants
 runtime: python38

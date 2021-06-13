@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +29,7 @@ SECRET_KEY = '9*n)6l)31mjje@r0==j9duy!-po2=9cor#s%lyn(l90loxcsd-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['third-fold-263914.uc.r.appspot.com',
-                 'mutantmagneto-dot-third-fold-263914.uc.r.appspot.com',
+ALLOWED_HOSTS = ['mutants-dot-third-fold-263914.uc.r.appspot.com',
                  '127.0.0.1']
 
 
@@ -77,12 +80,31 @@ WSGI_APPLICATION = 'xMen.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# [START db_setup]
+if os.getenv('GAE_APPLICATION', None):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/third-fold-263914:us-central1:felipe',
+            'USER': 'magneto',
+            'PASSWORD': 'Clave123',
+            'NAME': 'mutants',
+        }
     }
-}
+else:
+    DATABASES = {
+         'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '34.134.44.40',
+            'PORT': '3306',
+            'NAME': 'mutants',
+            'USER': 'magneto',
+            'PASSWORD': 'Clave123',
+         }
+    }
+# [END db_setup]
 
 
 # Password validation

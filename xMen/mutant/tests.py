@@ -40,6 +40,19 @@ class MutantViewTest(TestCase):
         response = self.client.post('/mutant/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_create_register_valor_no_valido(self):
+        """
+        Crear un nuevo registro validacion de mutante, no permitido por valor no valido
+        """
+        data = {"dna":["ATGCGS",
+                       "CAGTGC",
+                       "TTATGT",
+                       "AGAAGG",
+                       "CCCCTA",
+                       "TCACTG"]}
+        response = self.client.post('/mutant/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
     def test_stats(self):
         self.test_create_register_no_mutant()
         self.test_create_register_mutant()
